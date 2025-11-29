@@ -16,6 +16,10 @@ import { toast } from "sonner";
 const TaskCard = ({ task, index, handleTaskChange }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [updateTaskTitle, setUpdateTaskTitle] = useState(task.title || "");
+
+  // MOBILE: toggle hiện action
+  const [mobileActions, setMobileActions] = useState(false);
+
   const deleteTask = async (taskId) => {
     try {
       await api.delete(`/tasks/${taskId}`);
@@ -26,6 +30,7 @@ const TaskCard = ({ task, index, handleTaskChange }) => {
       toast.error("Lỗi xảy ra khi xóa nhiệm vụ.");
     }
   };
+
   const toggleTaskCompleteButton = async () => {
     try {
       if (task.status === "active") {
@@ -49,6 +54,7 @@ const TaskCard = ({ task, index, handleTaskChange }) => {
       toast.error("Lỗi xảy ra khi cập nhập nhiệm vụ.");
     }
   };
+
   const updateTask = async () => {
     try {
       setIsEditing(false);
@@ -62,22 +68,25 @@ const TaskCard = ({ task, index, handleTaskChange }) => {
       toast.error("Lỗi xảy ra khi cập nhật nhiệm vụ mới.");
     }
   };
+
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       updateTask();
     }
   };
+
   return (
     <div>
       <Card
         className={cn(
-          "p-4 bg-gradient-card border-0 shadow-custom-md hover:shadow-custom-lg transition-all duration200 animate-fade-in group",
+          "p-4 bg-gradient-card border-0 shadow-custom-md hover:shadow-custom-lg transition-all duration-200 animate-fade-in group",
           task.status === "complete" && "opacity-75"
         )}
         style={{ animationDelay: `${index * 50}ms` }}
+        onClick={() => setMobileActions(!mobileActions)} // MOBILE CLICK HIỆN ACTION
       >
         <div className="flex items-center gap-4">
-          {/* nút tròn */}
+          {/* CHECK BUTTON */}
           <Button
             variant="ghost"
             size="icon"
@@ -95,7 +104,8 @@ const TaskCard = ({ task, index, handleTaskChange }) => {
               <Circle className="size-5" />
             )}
           </Button>
-          {/* hiển thị hoặc chỉnh sửa tiêu đề */}
+
+          {/* TITLE */}
           <div className="flex-1 min-w-0">
             {isEditing ? (
               <Input
@@ -122,12 +132,14 @@ const TaskCard = ({ task, index, handleTaskChange }) => {
                 {task.title}
               </p>
             )}
-            {/* Ngày tạo và hoàn thành */}
+
+            {/* DATE */}
             <div className="flex items-center gap-2 mt-1">
               <Calendar className="size-3 text-muted-foreground" />
               <span className="text-xs text-muted-foreground">
                 {new Date(task.createdAt).toLocaleString()}
               </span>
+
               {task.completeAt && (
                 <>
                   <span className="text-xs text-muted-foreground"> -</span>
@@ -140,27 +152,61 @@ const TaskCard = ({ task, index, handleTaskChange }) => {
             </div>
           </div>
 
-          {/* Nút chỉnh và xóa */}
-          <div className="hidden gap-2 group-hover:inline-flex animate-slide-up">
-            {/* Nút edit */}
+          {/* ACTION BUTTONS */}
+          <div
+            className={cn(
+              // MOBILE: click hiện
+              mobileActions ? "flex" : "hidden",
+
+              // DESKTOP: hover hiện
+              "md:hidden gap-2"
+
+              // DESKTOP ZONE
+            )}
+          >
             <Button
               variant="ghost"
               size="icon"
               className="shrink-0 transition-colors size-8 text-muted-foreground hover:text-info"
               onClick={() => {
-                setIsEditing(true), setUpdateTaskTitle(task.title || "");
+                setIsEditing(true);
+                setUpdateTaskTitle(task.title || "");
               }}
             >
               <SquarePen className="size-4" />
             </Button>
-            {/* nút xóa */}
+
             <Button
               variant="ghost"
               size="icon"
               className="shrink-0 transition-colors size-8 text-muted-foreground hover:text-destructive"
               onClick={() => deleteTask(task._id)}
             >
-              <Trash2 className="size-4"></Trash2>
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+
+          {/* DESKTOP ACTIONS */}
+          <div className="hidden md:group-hover:flex gap-2 animate-slide-up">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="shrink-0 transition-colors size-8 text-muted-foreground hover:text-info"
+              onClick={() => {
+                setIsEditing(true);
+                setUpdateTaskTitle(task.title || "");
+              }}
+            >
+              <SquarePen className="size-4" />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="shrink-0 transition-colors size-8 text-muted-foreground hover:text-destructive"
+              onClick={() => deleteTask(task._id)}
+            >
+              <Trash2 className="size-4" />
             </Button>
           </div>
         </div>
