@@ -60,7 +60,7 @@ const HomePage = () => {
   };
 
   // biến
-  const filteredTasks = taskBuffer.filter((task) => {
+  const filteredTasks = (taskBuffer || []).filter((task) => {
     switch (filter) {
       case "active":
         return task.status === "active";
