@@ -1,6 +1,6 @@
 import { FilterType } from "@/lib/data.js";
-import {  Filter } from "lucide-react";
-import {Badge} from "./ui/badge"
+import { Filter } from "lucide-react";
+import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
 const StatsAndFilters = ({
@@ -34,7 +34,7 @@ const StatsAndFilters = ({
             variant={filter === type ? "gradient" : "ghost"}
             size="sm"
             className="capitalize"
-            onClick={()=> setFilter(type)}
+            onClick={() => setFilter(type)}
           >
             <Filter className="size-4" />
 
